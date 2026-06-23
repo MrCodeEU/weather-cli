@@ -29,7 +29,7 @@ func main() {
 		noAnim      = flag.Bool("no-animation", false, "disable animated weather icons")
 		units       = flag.String("units", "", "units: metric or imperial")
 		mapProvider = flag.String("map-provider", "", "map provider: auto, rainviewer, openmeteo")
-		renderMode  = flag.String("render-mode", "", "render mode: auto, viu, termimg, blocks")
+		renderMode  = flag.String("render-mode", "", "render mode: auto, inline, viu, termimg, blocks")
 		iconStyle   = flag.String("icon-style", "", "icon style: ascii or unicode")
 		radarAuto   = flag.Bool("radar-autoplay", false, "autoplay radar frames every second")
 		initialPage = flag.String("page", "", "initial page: current, hourly, daily, details, radar, settings, icons")
@@ -47,6 +47,9 @@ func main() {
 	if *lat != 0 || *lon != 0 {
 		cfg.Latitude = *lat
 		cfg.Longitude = *lon
+		if *location == "" {
+			cfg.LocationName = ""
+		}
 	}
 	if *units != "" {
 		cfg.Units = *units

@@ -773,7 +773,7 @@ func (m *Model) applySetting(field int, value string) bool {
 		}
 	case 5:
 		switch value {
-		case "viu", "termimg", "blocks":
+		case "viu", "termimg", "blocks", "inline", "iterm", "xterm":
 			m.cfg.RenderMode = value
 		default:
 			m.cfg.RenderMode = "auto"
@@ -854,6 +854,8 @@ func nextRenderMode(current string) string {
 	case "viu":
 		return "termimg"
 	case "termimg":
+		return "inline"
+	case "inline", "iterm", "xterm":
 		return "blocks"
 	default:
 		return "auto"

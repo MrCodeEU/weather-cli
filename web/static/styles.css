@@ -73,6 +73,7 @@ body {
 
 .terminal-frame {
   width: min(1280px, 100%);
+  height: calc(100vh - 138px);
   min-height: 360px;
   margin: 0 auto;
   padding: 10px;
@@ -84,9 +85,19 @@ body {
 }
 
 #terminal {
+  position: relative;
+  overflow: hidden;
   width: 100%;
   height: 100%;
-  min-height: calc(100vh - 138px);
+  min-height: 0;
+}
+
+#radar-image {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  object-fit: fill;
 }
 
 .xterm {
@@ -122,6 +133,10 @@ body {
   }
 
   #terminal {
-    min-height: calc(100vh - 166px);
+    min-height: 0;
+  }
+
+  .terminal-frame {
+    height: calc(100vh - 166px);
   }
 }

@@ -64,10 +64,24 @@ func New(opts Options, logger *slog.Logger) (http.Handler, error) {
 			logger.Warn("websocket upgrade failed", "error", err)
 			return
 		}
-		session := newSession(conn, opts.CLIPath, logger)
+		session := newSession(conn, opts.CLIPath, launchArgs(r), logger)
 		session.run(r.Context())
 	})
 	return mux, nil
+}
+
+func launchArgs(r *http.Request) []string {
+	args := []string{"--render-mode", "inline"}
+	q := r.URL.Query()
+	lat, latErr := strconv.ParseFloat(q.Get("lat"), 64)
+	lon, lonErr := strconv.ParseFloat(q.Get("lon"), 64)
+	if latErr == nil && lonErr == nil && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180 {
+		args = append(args,
+			"--lat", strconv.FormatFloat(lat, 'f', -1, 64),
+			"--lon", strconv.FormatFloat(lon, 'f', -1, 64),
+		)
+	}
+	return args
 }
 
 func staticFS(root string) (fs.FS, error) {
@@ -80,6 +94,7 @@ func staticFS(root string) (fs.FS, error) {
 type session struct {
 	conn    *websocket.Conn
 	cliPath string
+	args    []string
 	logger  *slog.Logger
 
 	ptmx   *os.File
@@ -93,8 +108,8 @@ type clientMessage struct {
 	Data string `json:"data"`
 }
 
-func newSession(conn *websocket.Conn, cliPath string, logger *slog.Logger) *session {
-	return &session{conn: conn, cliPath: cliPath, logger: logger}
+func newSession(conn *websocket.Conn, cliPath string, args []string, logger *slog.Logger) *session {
+	return &session{conn: conn, cliPath: cliPath, args: args, logger: logger}
 }
 
 func (s *session) run(ctx context.Context) {
@@ -103,11 +118,11 @@ func (s *session) run(ctx context.Context) {
 	}()
 
 	cols, rows := uint16(100), uint16(32)
-	cmd := exec.CommandContext(ctx, s.cliPath, "--render-mode", "blocks")
+	cmd := exec.CommandContext(ctx, s.cliPath, s.args...)
 	cmd.Env = append(os.Environ(),
 		"TERM=xterm-256color",
 		"COLORTERM=truecolor",
-		"WEATHER_CLI_RENDER_MODE=blocks",
+		"WEATHER_CLI_RENDER_MODE=inline",
 		"XDG_CONFIG_HOME="+sessionConfigDir(),
 	)
 

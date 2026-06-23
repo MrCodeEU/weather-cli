@@ -4,6 +4,7 @@ package maps
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"image"
@@ -18,6 +19,8 @@ import (
 	"time"
 
 	termimg "github.com/blacktop/go-termimg"
+	sixel "github.com/mattn/go-sixel"
+	xdraw "golang.org/x/image/draw"
 
 	"weather-cli/internal/config"
 	"weather-cli/internal/weather"
@@ -101,6 +104,12 @@ func renderImage(ctx context.Context, img image.Image, width, height int, mode s
 	switch strings.ToLower(strings.TrimSpace(mode)) {
 	case "blocks":
 		return renderBlocks(img, width, height), nil
+	case "sixel", "xterm":
+		return renderSixelImage(img, width, height)
+	case "inline":
+		return renderInlineImage(img, width, height, "inline")
+	case "iterm":
+		return renderInlineImage(img, width, height, "iterm")
 	case "viu":
 		if frame, err := renderViu(ctx, img, width, height); err == nil {
 			return frame, nil
@@ -124,6 +133,33 @@ func renderImage(ctx context.Context, img image.Image, width, height int, mode s
 
 func renderBlocks(img image.Image, width, height int) RenderedFrame {
 	return RenderedFrame{Art: RenderImageANSI(img, width, height), Renderer: "blocks"}
+}
+
+func renderSixelImage(img image.Image, width, height int) (RenderedFrame, error) {
+	const cellWidthPx = 8
+	const cellHeightPx = 16
+
+	scaled := image.NewNRGBA(image.Rect(0, 0, max(1, width*cellWidthPx), max(1, height*cellHeightPx)))
+	xdraw.ApproxBiLinear.Scale(scaled, scaled.Bounds(), img, img.Bounds(), draw.Over, nil)
+
+	var out bytes.Buffer
+	encoder := sixel.NewEncoder(&out)
+	encoder.Colors = 192
+	if err := encoder.Encode(scaled); err != nil {
+		return RenderedFrame{}, err
+	}
+	out.WriteString(strings.Repeat("\r\n", height))
+	return RenderedFrame{Art: out.String(), Native: true, Renderer: "inline"}, nil
+}
+
+func renderInlineImage(img image.Image, width, height int, renderer string) (RenderedFrame, error) {
+	var pngData bytes.Buffer
+	if err := png.Encode(&pngData, img); err != nil {
+		return RenderedFrame{}, err
+	}
+	encoded := base64.StdEncoding.EncodeToString(pngData.Bytes())
+	sequence := fmt.Sprintf("\x1b]1337;File=inline=1;size=%d;width=%d;height=%d;preserveAspectRatio=1:%s\a%s", pngData.Len(), width, height, encoded, strings.Repeat("\r\n", height))
+	return RenderedFrame{Art: sequence, Native: true, Renderer: renderer}, nil
 }
 
 func renderViu(ctx context.Context, img image.Image, width, height int) (RenderedFrame, error) {
@@ -581,9 +617,10 @@ func setSafe(img *image.NRGBA, x, y int, c color.NRGBA) {
 	}
 }
 
-// ClearNativeImages removes Kitty-compatible terminal images from the viewport.
+// ClearNativeImages removes terminal image layers from renderers that keep image
+// storage outside the text buffer.
 func ClearNativeImages() string {
-	return "\x1b_Ga=d,d=A\x1b\\"
+	return "\x1b[!p\x1b_Ga=d,d=A\x1b\\"
 }
 
 // RenderImageANSI converts an image into terminal-safe ANSI true-color blocks.

@@ -107,6 +107,26 @@ func TestRenderFrameBlocksUsesBlocks(t *testing.T) {
 	}
 }
 
+func TestRenderFrameInlineUsesNativeImageProtocol(t *testing.T) {
+	pngBody := tinyPNG(t)
+	svc := NewService(roundTrip(func(_ *http.Request) (*http.Response, error) {
+		return &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(strings.NewReader(pngBody))}, nil
+	}), config.Default())
+	frame, err := svc.RenderFrame(context.Background(), Frame{URL: "https://example.test/tile.png"}, 8, 4, "inline")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !frame.Native {
+		t.Fatal("inline mode should use native protocol")
+	}
+	if frame.Renderer != "inline" {
+		t.Fatalf("renderer got %q, want inline", frame.Renderer)
+	}
+	if !strings.Contains(frame.Art, "\x1b]1337;File=inline=1;") {
+		t.Fatalf("inline mode did not emit iTerm image sequence: %q", frame.Art)
+	}
+}
+
 func TestRenderFrameAutoFallsBackToBlocksWithoutViu(t *testing.T) {
 	oldLookPath := execLookPath
 	execLookPath = func(string) (string, error) {

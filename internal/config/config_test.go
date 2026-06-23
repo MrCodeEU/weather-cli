@@ -41,6 +41,14 @@ func TestNormalizeConfigAcceptsTermimgRenderMode(t *testing.T) {
 	}
 }
 
+func TestNormalizeConfigAcceptsInlineRenderMode(t *testing.T) {
+	cfg := Config{RenderMode: "inline"}
+	normalize(&cfg)
+	if cfg.RenderMode != "inline" {
+		t.Fatalf("render mode got %q", cfg.RenderMode)
+	}
+}
+
 func TestNormalizeConfigAcceptsUnicodeIconStyle(t *testing.T) {
 	cfg := Config{IconStyle: "unicode"}
 	normalize(&cfg)

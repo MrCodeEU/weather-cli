@@ -112,7 +112,7 @@ func normalize(cfg *Config) {
 	}
 	cfg.RenderMode = strings.ToLower(strings.TrimSpace(cfg.RenderMode))
 	switch cfg.RenderMode {
-	case "viu", "termimg", "blocks", "auto":
+	case "viu", "termimg", "blocks", "inline", "iterm", "xterm", "auto":
 	default:
 		cfg.RenderMode = "auto"
 	}

@@ -6,7 +6,7 @@
     <title>Weather CLI</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2315191c'/%3E%3Ccircle cx='25' cy='25' r='11' fill='%23e8c468'/%3E%3Cpath d='M18 42h30a9 9 0 0 0 0-18 15 15 0 0 0-28 7 6 6 0 0 0-2 11z' fill='%2368d8c1'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/styles.css?v=2" />
   </head>
   <body>
     <main class="app-shell">
@@ -18,7 +18,9 @@
         <div class="meta" id="wasm-status">Starting WASM helper...</div>
       </header>
       <section class="terminal-frame" aria-label="Weather CLI terminal">
-        <div id="terminal"></div>
+        <div id="terminal">
+          <img id="radar-image" alt="" />
+        </div>
       </section>
       <footer class="statusbar">
         <span id="connection">Connecting...</span>
@@ -31,6 +33,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links@0.11.0/lib/addon-web-links.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-image@0.9.0/lib/addon-image.js"></script>
     <script src="/wasm_exec.js"></script>
-    <script src="/app.js" type="module"></script>
+    <script src="/app.js?v=2" type="module"></script>
   </body>
 </html>
