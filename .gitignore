@@ -1,7 +1,7 @@
 .env
 .playwright-mcp/
 bin/
-weather-cli
+/weather-cli
 coverage.out
 web/static/wasm_exec.js
 web/static/weather-web.wasm
