@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Weather CLI</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2315191c'/%3E%3Ccircle cx='25' cy='25' r='11' fill='%23e8c468'/%3E%3Cpath d='M18 42h30a9 9 0 0 0 0-18 15 15 0 0 0-28 7 6 6 0 0 0-2 11z' fill='%2368d8c1'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">weather-cli.mljr.eu</p>
+          <h1>Weather CLI</h1>
+        </div>
+        <div class="meta" id="wasm-status">Starting WASM helper...</div>
+      </header>
+      <section class="terminal-frame" aria-label="Weather CLI terminal">
+        <div id="terminal"></div>
+      </section>
+      <footer class="statusbar">
+        <span id="connection">Connecting...</span>
+        <span>Open-Meteo + RainViewer</span>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links@0.11.0/lib/addon-web-links.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-image@0.9.0/lib/addon-image.js"></script>
+    <script src="/wasm_exec.js"></script>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
