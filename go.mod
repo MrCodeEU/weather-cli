@@ -1,6 +1,6 @@
 module weather-cli
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/blacktop/go-termimg v0.1.26
@@ -11,7 +11,7 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/mattn/go-runewidth v0.0.19
 	github.com/mattn/go-sixel v0.0.8
-	golang.org/x/image v0.36.0
+	golang.org/x/image v0.47.0
 )
 
 require (
@@ -37,7 +37,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/soniakeys/quant v1.0.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/term v0.40.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 )
